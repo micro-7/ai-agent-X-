@@ -3,52 +3,51 @@ NOTE----- THIS EXPLANATION IS OF test4.py
           
           
           
-          ┌──────────────────────┐
-          │    Twitter API       │
-          │ (mentions & replies) │
-          └──────────┬───────────┘
-                     │ fetch_mentions()
-                     ▼
-         ┌────────────────────────────┐
-         │   Agent Main Loop          │
-         │  (mock/live mode)          │
-         └───────┬────────────────────┘
-                 │ save_new_mention()
-                 ▼
-       ┌───────────────────────┐
-       │  SQLite Database       │
-       │  (SQLAlchemy ORM)      │
-       └──────┬────────────────┘
-              │ process_mention_db()
-              ▼
-      ┌───────────────────────────┐
-      │  Moderation Filter         │
-      │ (keyword blacklist, rules) │
-      └──────────┬────────────────┘
-                 │ safe?
-                 ▼
-     ┌─────────────────────────────┐
-     │  Gemini LLM via LangChain   │
-     │  (ChatGoogleGenerativeAI)   │
-     └──────────┬──────────────────┘
-                │ call_llm()
-                ▼
-       ┌───────────────────────────┐
-       │   Reply stored as         │
-       │   status = "pending"      │
-       └──────────┬────────────────┘
-                  │ Admin reviews
-                  ▼
-   ┌──────────────────────────────────────┐
-   │       Admin CLI (--admin mode)       │
-   │ list | approve | reject | simulate   │
-   └──────────┬───────────────────────────┘
-              │ publish_reply_to_twitter()
-              ▼
-         ┌──────────────────────┐
-         │     Twitter API      │
-         │ (post reply tweet)   │
-         └──────────────────────┘
+                ┌────────────────────────┐
+                │      Twitter API       │
+                │  (mentions & replies)  │
+                └─────────────┬──────────┘
+                              │  fetch_mentions()
+                              ▼
+                ┌──────────────────────────────┐
+                │        Agent Main Loop        │
+                │      (mock mode / live mode)  │
+                └─────────────┬─────────────────┘
+                              │  save_new_mention()
+                              ▼
+                ┌──────────────────────────────┐
+                │        SQLite Database       │
+                │       (SQLAlchemy ORM)       │
+                └─────────────┬────────────────┘
+                              │  process_mention_db()
+                              ▼
+                ┌──────────────────────────────┐
+                │       Moderation Filter       │
+                │ (keyword blacklist & heuristics)
+                └─────────────┬────────────────┘
+                              │   safe?
+                              ▼
+                ┌──────────────────────────────┐
+                │  Gemini LLM via LangChain     │
+                │ (ChatGoogleGenerativeAI model)│
+                └─────────────┬────────────────┘
+                              │  call_llm()
+                              ▼
+                ┌──────────────────────────────┐
+                │   Reply stored as "pending"  │
+                └─────────────┬────────────────┘
+                              │   Admin reviews
+                              ▼
+        ┌─────────────────────────────────────────────┐
+        │            Admin CLI (--admin mode)          │
+        │  list | approve | reject | simulate | publish │
+        └───────────────────┬──────────────────────────┘
+                            │  publish_reply_to_twitter()
+                            ▼
+                ┌────────────────────────┐
+                │       Twitter API       │
+                │     (post reply tweet)  │
+                └─────────────────────────┘
 
 
 
